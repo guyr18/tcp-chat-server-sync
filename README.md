@@ -7,8 +7,8 @@ framework. Below, I provide implementation insight and provide practical example
 ## What is Synchronous?
 
 In the context of this application, synchronous refers to reading / writing to an arbritrary socket stream by means of a blocking call. In order  
-to proceed further, the synchronous operation must be completed entirely. There are no gaps in transmission as you might see in an asynchronous  
-implementation.  
+to proceed further, the synchronous operation must be completed entirely. There are no gaps in transmission and function execution  
+as you might see in an asynchronous implementation.      
 
 # Insight into Packet Transmission  
 
@@ -64,8 +64,8 @@ activity as it becomes available. From this thread, two additional threads are s
   socket. Moreover,  it is the server's responsibility to transmit this packet to the correct subset of peers (i.e.: unicast, multicast, broadcast).  
   
   **Synchronous Ping Thread**: The responsibility of this thread is to write a ping packet to the TCP socket of each user that is currently cached  
-  within the server. If a transmission error occurs, such as a broken pipe or a connection reset, the user can safely be removed from cache as they  
-  are no longer connected.  
+  within the server. If a transmission error occurs, such as a broken pipe or a connection reset, the user can safely be removed from   
+  cache as they are no longer connected.    
   
 ### Client Multi-Threaded Infrastructure  
 
