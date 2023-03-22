@@ -49,7 +49,7 @@ class Server
 
             if(m_ioService.get() == nullptr) { return; }
 
-            handleSocketRead(user.tcpSocket);
+            handleSocketRead(user);
             boost::this_thread::sleep(boost::posix_time::milliseconds(250));
             startSyncRead(user);
 
@@ -91,11 +91,12 @@ class Server
             }
         }
 
-        // HandleSocketRead(socketPtr) performs a synchronous read on the deferenced value within shared_ptr, socketPtr.
-        void handleSocketRead(boost::shared_ptr<tcp::socket>& socketPtr)
+        // HandleSocketRead(user) performs a synchronous read on the TCP socket binded to User object, user.
+        void handleSocketRead(User& user)
         {
 
             boost::asio::streambuf buf;
+            boost::shared_ptr<tcp::socket> socketPtr = user.tcpSocket;
 
             try
             {
@@ -125,7 +126,6 @@ class Server
 
                     while(data[--terminatorIndex] != ';') {}
                                                                   
-                    cout << "data = " << data << endl;
                     content = data.substr(3, terminatorIndex - 3);
 
                 }
@@ -139,6 +139,41 @@ class Server
                 cout << content << endl;
                 packetSend_Broadcast("", data);
                 
+            }
+            else if(tag == PacketTagTypes::PKT_PM)
+            {
+
+                
+                uint nicknameNextWSIndex = 3;
+
+                while(data[nicknameNextWSIndex] != ' ')
+                {
+
+                    nicknameNextWSIndex++;
+
+                }
+
+                const string targetNickname = data.substr(3, nicknameNextWSIndex - 3);
+
+                if(userPoolMap.count(targetNickname) == 0)
+                {
+
+                    // Alert the user (through unicasting) that issued this command that the targeted user is not online (or connected to the server)
+                    // to send a private message.
+                    const string& offlineMessage = "User '" + targetNickname + "' is not currently online!";
+                    cout << offlineMessage << endl;
+                    packetSend_Unicast(user, tag + offlineMessage + ";");
+
+                }
+                else
+                {
+
+                    // Send the private message to the TCP socket of the correct user through unicasting.
+                    const string& targetMessage = "From [" + user.nickname + "]: " + data.substr(nicknameNextWSIndex + 1);
+                    cout << targetMessage << endl;
+                    packetSend_Unicast(userPoolMap[targetNickname], tag + targetMessage + ";");
+
+                }
             }
         }
 
@@ -189,7 +224,7 @@ class Server
         // Packet casting methods.
 
         // PacketSend_Unicast(targetClient, message) writes a single packet to the targetClient with a content of message.
-        void packetSend_Unicast(User& user, const string& message, boost::system::error_code& error)
+        void packetSend_Unicast(User& user, const string& message)
         {
 
             try

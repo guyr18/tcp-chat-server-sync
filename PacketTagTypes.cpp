@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 
 class PacketTagTypes
@@ -15,5 +16,6 @@ class PacketTagTypes
         inline static const std::string PKT_NICKNAME{"%n%"};
         inline const static std::string PKT_MESSAGE{"%m%"};
         inline const static std::string PKT_PING{"%p%"};
+        inline const static std::string PKT_PM{"%v%"};
 
 };

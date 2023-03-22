@@ -69,11 +69,10 @@ class Client
 
             // We are only interested in displaying messages to the user. We want to ignore other
             // packet types such as ping checks, etc.
-            if(tag != PacketTagTypes::PKT_MESSAGE) { return; }
+            if(tag == PacketTagTypes::PKT_PING || tag == PacketTagTypes::PKT_NICKNAME) { return; }
 
             // Here we need to find the index of the final semicolon so we can print the contents
             // of the message that precede it.
-
             uint terminatorIndex = data.length() - 1; // Start at the last index of the string.
 
             // Run a busy loop that backtracks until it encounters the first ';' character.
