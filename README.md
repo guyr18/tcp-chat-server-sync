@@ -79,6 +79,12 @@ that is responsible for synchronous reads.
   by reading incoming data that has been written to their corresponding TCP socket. It will then display this information to the
   standard output stream as needed.
   
+## Chat Commands
+
+Chat commands are indicated by using a '/' character. Below are a list of currently available commands:
+
+  ```/pm <target_client_nickname> <message>```
+  
 ## Compilation and Running Process  
 
 This application has only been tested on a **Ubuntu 22.04** OS. The client and server may be compiled from the CLI as follows: 
@@ -93,5 +99,4 @@ From here, you may run each executable as follows:
 
 ```./cmain <host> <port> <nickname>```  
 
-The server must be running first for a client to successfully connect to it. In the future, I would like to extend functionality
-to include features that include designated commands such as private messaging, user adminstration, and more.
+The server must be running first for a client to successfully connect to it.
