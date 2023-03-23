@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <boost/asio.hpp>
-#include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "PacketTagTypes.cpp"
@@ -24,7 +24,7 @@ class Client
         uint m_portNum; // The port number of the server that this Client object is connected to.
         string m_nickname; // The nickname of this Client object.
         bool m_connected; // The connection status of this Client object.
-        boost::shared_ptr<tcp::socket> m_tcpSocket; // A shared pointer that refers to the tcp::socket connection of this Client object.
+        boost::scoped_ptr<tcp::socket> m_tcpSocket; // A scoped pointer that refers to the tcp::socket connection of this Client object.
 
         // Synchronous operations
 
