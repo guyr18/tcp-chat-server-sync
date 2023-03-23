@@ -83,6 +83,9 @@ that is responsible for synchronous reads.
 
 Chat commands are indicated by using a '/' character. Below are a list of currently available commands:
 
+  ### Private Messaging
+  This command allows you to privately message another client. It functions by unicasting a packet to the targeted client. If
+  this user is not online, a unicasted packet is written to the TCP socket of the original messenger (i.e.: you).
   ```/pm <target_client_nickname> <message>```
   
 ## Compilation and Running Process  
