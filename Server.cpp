@@ -3,6 +3,7 @@
 #include <string>
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/thread.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -38,8 +39,8 @@ class Server
 
         string m_hostName; // The hostname that this Server object is running on.
         uint m_portNum; // The port number that this Server object is binded to.
-        boost::shared_ptr<tcp::acceptor> m_acceptor; // TCP acceptor shared pointer.
-        boost::shared_ptr<io_service> m_ioService; // Shared pointer to the TCP IO Service that is embedded within @see m_acceptor.
+        boost::scoped_ptr<tcp::acceptor> m_acceptor; // TCP acceptor scoped pointer.
+        boost::scoped_ptr<io_service> m_ioService; // Scoped pointer to the TCP IO Service that is embedded within @see m_acceptor.
         boost::unordered_map<string, User> userPoolMap; // A hashmap that stores the state of each connected user.
 
         // StartSyncRead(user) starts a synchronous read to check for any incoming data from the TCP socket that is binded to
@@ -56,8 +57,8 @@ class Server
         }
 
         // HandleSocketRead(socketPtr, args) performs a synchronous read on the deferenced value of socketPtr. Additionally,
-        // this overload provides args to store miscellaneous data (such as nickname inside the shared_ptr object).
-        void handleSocketRead(boost::shared_ptr<tcp::socket>& socketPtr, boost::shared_ptr<string>& args)
+        // this overload provides args to store miscellaneous data (such as nickname inside the scoped_ptr object).
+        void handleSocketRead(boost::shared_ptr<tcp::socket>& socketPtr, boost::scoped_ptr<string>& args)
         {
 
             boost::asio::streambuf buf;
@@ -96,7 +97,7 @@ class Server
         {
 
             boost::asio::streambuf buf;
-            boost::shared_ptr<tcp::socket> socketPtr = user.tcpSocket;
+            boost::shared_ptr<tcp::socket>& socketPtr = user.tcpSocket;
 
             try
             {
@@ -197,7 +198,7 @@ class Server
 
             if(clientSocket.get() == nullptr) { return; }
 
-            boost::shared_ptr<string> nickname_ptr;
+            boost::scoped_ptr<string> nickname_ptr;
             handleSocketRead(clientSocket, nickname_ptr); 
             packetSend_Broadcast(*nickname_ptr, PacketTagTypes::PKT_MESSAGE + "[Server]: " + *nickname_ptr + " joined!;");
             boost::thread readerThread{boost::bind(&Server::startSyncRead, this, userPoolMap[*nickname_ptr])};
